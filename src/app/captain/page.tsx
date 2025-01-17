@@ -28,12 +28,18 @@ export default function page() {
 
   //define the driver data
   const driverData={
-    name:currentUser?.name,
-    id:currentUser?._id,
-    email:currentUser?.email,
-    location:{
-      latitude:0,
-      longitude:0,
+    name: currentUser?.name,
+    id: currentUser?._id,
+    email: currentUser?.email,
+    phone: '9080848030',
+    location: {
+        latitude: 27.6332,
+        longitude: 85.5277,
+    },
+    vechicel:{
+        color:'red',
+        plate:'BA Kha 123',
+        vehicleType:'Bike'
     }
   }
   const [userSearchingRide, setUserSearchingRide] = useState<userSearchingDriverInterface[]>([]);
@@ -48,8 +54,12 @@ export default function page() {
     });
     socketRef.current = socket;
     socket.on('broadCastDrives', ({formdata}) => {
-      setUserSearchingRide((prev) => [...prev, formdata.formdata]);
-      console.log('requesting user is',formdata.formdata);
+      setUserSearchingRide((prev) =>
+        prev.find((data) => data.id === formdata.formdata.id)
+          ? prev
+          : [...prev, formdata.formdata]
+      );
+      console.log('requesting user is', formdata.formdata);
     });
 
     socket.on('rideAccepted', ({formdata}) => {
