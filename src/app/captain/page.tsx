@@ -18,7 +18,9 @@ interface userSearchingDriverInterface {
     latitude: number;
     longitude: number;
     name: string;
-  };
+  }
+  price: number;
+  vechicelType: string
 }
 
 export default function page() {
@@ -26,23 +28,7 @@ export default function page() {
   const socketRef = useRef<Socket | null>(null);
   const driverId = currentUser?._id;
 
-  //define the driver data
-  const driverData = {
-    name: currentUser?.name,
-    id: currentUser?._id,
-    email: currentUser?.email,
-    phone: '9080848030',
-    avatar: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSQBnleaDEx8-_IxWxO8lRPzYclZ67QGdUWRg&s',
-    location: {
-      latitude: 27.6332,
-      longitude: 85.5277,
-    },
-    vechicel: {
-      color: 'red',
-      plate: 'BA Kha 123',
-      vehicleType: 'Bike',
-    },
-  };
+
   const [userSearchingRide, setUserSearchingRide] = useState<userSearchingDriverInterface[]>([]);
 
   //useeffect for socket io connection
@@ -75,7 +61,27 @@ export default function page() {
     };
   }, []);
 
-  const handelRequestRide = (userId: string) => {
+  const handelRequestRide = (data: userSearchingDriverInterface) => {
+    const userId=data.id
+      //define the driver data
+  const driverData = {
+    name: currentUser?.name,
+    id: currentUser?._id,
+    email: currentUser?.email,
+    phone: '9080848030',
+    avatar: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSQBnleaDEx8-_IxWxO8lRPzYclZ67QGdUWRg&s',
+    location: {
+      latitude: 27.6332,
+      longitude: 85.5277,
+    },
+    vechicel: {
+      color: 'red',
+      plate: 'BA Kha 123',
+      vehicleType: 'Bike',
+    },
+    price:data.price,
+    vehicleType:data.vechicelType
+  };
     if (socketRef.current === null) return;
     socketRef.current.emit('requestRideToUser', {driverData, userId});
     console.log('made request to user', userId);
@@ -88,7 +94,7 @@ export default function page() {
             <div key={data.id}>
               <p>{data.name}</p>
               <div className="">
-                <button onClick={() => handelRequestRide(data.id)}>Request Ride</button>
+                <button onClick={() => handelRequestRide(data)}>Request Ride</button>
               </div>
             </div>
           ))}
