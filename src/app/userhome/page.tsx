@@ -18,8 +18,10 @@ interface driverRequestinRideInterface {
 export default function page() {
   const currentUser = useSelector((state: RootState) => state.user.currentUser);
   const [driverRequestingRide, setDriverRequestingRide] = useState<driverRequestinRideInterface[]>([]);
+  const [acceptedDriver, setAcceptedDriver] = useState<driverRequestinRideInterface>();
   const userID = currentUser?._id;
   const socketRef = useRef<Socket | null>(null)
+  const [rideAccepted,setRideAccepted] = useState<boolean>(false);
 
   const formdata = {
     name: currentUser?.name,
@@ -36,6 +38,7 @@ export default function page() {
       name: 'kathmandu',
     },
   };
+  // socketiobackendtest-production.up.railway.app
 
   //useeffect for socket io connection
   useEffect(() => {
@@ -71,10 +74,19 @@ export default function page() {
     console.log('user searched drivers');
   };
 
-  const handelAcceptRequest = (driverId:string)=>{
+  const handelAcceptRequest = (data:driverRequestinRideInterface)=>{
+    const driverId = data.id
     if(socketRef.current===null) return
     socketRef.current.emit('AcceptRequest',{formdata,driverId})
+    setAcceptedDriver(data)
     setDriverRequestingRide([]);
+  }
+
+  const handelCancelRide=(driverId:string)=>{
+    if(socketRef.current===null) return
+    socketRef.current.emit('CancelRide',{driverId,formdata})
+    setDriverRequestingRide([]);
+    setAcceptedDriver(undefined)
   }
   return (
     <>
@@ -84,10 +96,21 @@ export default function page() {
             <div className="" key={item.id}>
               <p>{item.name}</p>
               <div className="">
-                <button onClick={()=>handelAcceptRequest(item.id)}>Accept</button>
+                <button onClick={()=>handelAcceptRequest(item)}>Accept</button>
               </div>
             </div>
           ))}
+
+          {acceptedDriver && (
+            <div className="">
+              <p>{acceptedDriver.name}</p>
+              <p>{acceptedDriver.id}</p>
+              <p>{acceptedDriver.email}</p>
+              <div className="">
+                <button onClick={()=>handelCancelRide(acceptedDriver.id)}>cancel ride</button>
+              </div>
+            </div>
+          )}
         <div className="">
           <form onSubmit={handelFindDriver}>
             <h1>Hello user</h1>
