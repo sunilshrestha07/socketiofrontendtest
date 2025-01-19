@@ -42,6 +42,8 @@ export default function page() {
       plate: 'Ba 11 AA 1234',
       vehicleType: 'Bike',
     },
+    price: 100,
+    distance: 10,
   };
   const [userSearchingRide, setUserSearchingRide] = useState<userSearchingDriverInterface[]>([]);
 
