@@ -27,6 +27,8 @@ export default function page() {
     name: currentUser?.name,
     id: currentUser?._id,
     email: currentUser?.email,
+    avatar: currentUser?.avatar,
+    phone:currentUser?.phone,
     pickuplocation: {
       latitude: 0,
       longitude: 0,
@@ -37,7 +39,11 @@ export default function page() {
       longitude: 0,
       name: 'kathmandu',
     },
+    price:112,
+    vehicleType:'Bike',
+    distance:123,
   };
+
   // socketiobackendtest-production.up.railway.app
 
   //useeffect for socket io connection
